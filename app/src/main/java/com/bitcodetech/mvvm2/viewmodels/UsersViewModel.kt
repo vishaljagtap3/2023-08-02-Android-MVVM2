@@ -3,6 +3,7 @@ package com.bitcodetech.mvvm2.viewmodels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.bitcodetech.mvvm2.models.User
+import com.bitcodetech.mvvm2.models.UserPostModel
 import com.bitcodetech.mvvm2.repo.UsersRepo
 import kotlinx.coroutines.*
 
@@ -11,6 +12,7 @@ class UsersViewModel(
 ) : ViewModel() {
 
     val usersLiveData = MutableLiveData<List<User>>()
+    val userPostReponseIdLiveData = MutableLiveData<Int>()
 
     fun getUsers() {
 
@@ -23,5 +25,19 @@ class UsersViewModel(
         }
 
     }
+
+    fun addUser(name : String, job : String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val userPostResponseModel = usersRepo.addUser(
+                UserPostModel(name, job)
+            )
+
+            withContext(Dispatchers.Main) {
+                userPostReponseIdLiveData.postValue(userPostResponseModel.id)
+            }
+        }
+    }
+
+
 
 }
